@@ -1,0 +1,69 @@
+% This file is part of the atlas project.
+% Copyright 2018 the authors. All rights reserved.
+
+\documentclass[modern]{aastex62}
+
+% typography
+\setlength{\parindent}{1.\baselineskip}
+\newcommand{\acronym}[1]{{\small{#1}}}
+\newcommand{\package}[1]{\textsl{#1}}
+
+% aastex parameters
+% \received{not yet; THIS IS A DRAFT}
+%\revised{not yet}
+%\accepted{not yet}
+% % Adds "Submitted to " the arguement.
+% \submitjournal{ApJ}
+\shorttitle{atlas of stream interactions}
+\shortauthors{bonaca \& hogg}
+
+%@arxiver{}
+\usepackage{amsmath}
+
+\begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
+
+\title{Interactions of tidal streams with a massive perturber}
+
+\correspondingauthor{Ana Bonaca}
+\email{ana.bonaca@cfa.harvard.edu}
+
+\author[0000-0002-7846-9787]{Ana Bonaca}
+\affil{Harvard--Smithsonian Center for Astrophysics}
+
+\author[0000-0003-2866-9403]{David W. Hogg}
+\affiliation{Center for Cosmology and Particle Physics,
+Department of Physics,
+New York University}
+\affiliation{Center for Data Science,
+New York University}
+\affiliation{Max-Planck-Institut f\"ur Astronomie, Heidelberg}
+\affiliation{Flatiron Institute, Simons Foundation}
+
+\begin{abstract}\noindent % trust me
+We explore how tidal streams respond to a fly-by of a massive object as a function of the perturber density, impact parameter and angle.
+\end{abstract}
+
+\keywords{Galaxy: halo --- dark matter --- Galaxy: kinematics and dynamics --- methods: numerical}
+
+\section{Introduction}
+
+
+\section{Methods}
+\subsection{Assumptions}
+We choose properties of the analyzed tidal stream and a perturber such that the system is in the following limits:
+\begin{enumerate}
+ \item{\emph{dense}: the spatial extent of the perturber is small compared to the impact parameter $(R_s\ll B)$
+ }
+ \item{\emph{fast}: the orbital velocity of the perturber is large compared to the circular velocity induced in the stream $(V^2\gg GM/B)$
+ }
+ \item{\emph{long}: the stream length is large compared to the impact parameter $(\Delta\xi\gg B)$
+ }
+ \item{\emph{thin}: the stream width is small compared to the impact parameter $(\sigma_\eta\ll B)$
+ }
+ \item{\emph{cold}: the velocity dispersion in the stream is small compared to the orbital velocity of the perturber $(\sigma_v\ll V)$
+ }
+\end{enumerate}
+
+
+\end{document}
+
