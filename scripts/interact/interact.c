@@ -7,13 +7,13 @@ double Mcli, Mclf, Rcl, dt;
 int par_perpotential[12] = {0, 4, 3, 6, 6, 11, 4, 15, 13, 14, 19, 26};
 
 
-int interact(double M, double B, double phi, double V, double theta, double T, double dt_, int Nstar, double *x1, double *x2, double *x3, double *v1, double *v2, double *v3)
+int interact(double M, double B, double phi, double V, double theta, double Tenc, double T, double dt_, int Nstar, double *x1, double *x2, double *x3, double *v1, double *v2, double *v3)
 {
-    int i, j, k, N, Ntot, potential, potential_point;
+    int i, j, k, Nenc, Ntot, potential, potential_point;
     double x[3], v[3], x0[3], v0[3], xp[3], vp[3], direction, apar[1], par[4], apar_point[4];
     
-    N = T /dt_;
-    Ntot = 2*N + 1;
+    Nenc = Tenc / dt_;
+    Ntot = (T + Tenc) / dt_ + 1;
     dt = dt_;
     
     // perturber at encounter
@@ -24,6 +24,10 @@ int interact(double M, double B, double phi, double V, double theta, double T, d
     v0[0] = V*cos(theta);
     v0[1] = 0.;
     v0[2] = V*sin(theta);
+    
+//     printf("At the encounter\n");
+//     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
+//     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
 
     //////////////////////////////////
     // Find initial perturber position
@@ -33,15 +37,48 @@ int interact(double M, double B, double phi, double V, double theta, double T, d
     
     // initial leapfrog step
     dostep1(x0, v0, apar, potential, dt, direction);
+//     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
 
     // leapfrog steps
-    for(i=1;i<N;i++){
+    for(i=1;i<Nenc;i++){
         dostep(x0, v0, apar, potential, dt, direction);
+//         printf("%d %e %e %e\n", i, x0[0], x0[1], x0[2]);
+//         printf("%d %e %e %e\n", i, v0[0], v0[1], v0[2]);
     }
     
     // final leapfrog step
     dostep1(x0, v0, apar, potential, dt, direction);
-
+//     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
+//     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
+    
+//     printf("Initially\n");
+//     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
+//     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
+    
+//     direction = 1.;
+//     // initial leapfrog step
+//     dostep1(x0, v0, apar, potential, dt, direction);
+//     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
+// //     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
+// 
+//     // leapfrog steps
+//     for(i=1;i<Nenc;i++){
+//         dostep(x0, v0, apar, potential, dt, direction);
+//         printf("%d %e %e %e\n", i, x0[0], x0[1], x0[2]);
+// //         printf("%d %e %e %e\n", i, v0[0], v0[1], v0[2]);
+//     }
+//     
+//     // final leapfrog step
+//     dostep1(x0, v0, apar, potential, dt, direction);
+//     printf("0 %e %e %e\n", x0[0], x0[1], x0[2]);
+    
+//     printf("Back to encounter\n");
+//     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
+//     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
+    
+    x0[0] = 0.;
+    v0[0] = 0.;
+    v0[1] = 0.;
     
     ///////////////////
     // Perturb the tube
@@ -63,9 +100,15 @@ int interact(double M, double B, double phi, double V, double theta, double T, d
             par[k+1] = xp[k];
         initpar(potential_point, par, apar_point);
         
+//         if(i==Nstar/2)
+//             printf("%d %e %e %e\n", 0, x[0], x[1], x[2]);
+        
         dostep1(x, v, apar_point, potential_point, dt, direction);
         dostep1(xp, vp, apar, potential, dt, direction);
-
+        
+//         if(i==Nstar/2)
+//             printf("0.5 %e %e %e\n", j, x[0], x[1], x[2]);
+        
         // leapfrog steps
         for(j=1;j<Ntot;j++){
             for(k=0;k<3;k++)
@@ -74,14 +117,29 @@ int interact(double M, double B, double phi, double V, double theta, double T, d
             
             dostep(x, v, apar_point, potential_point, dt, direction);
             dostep(xp, vp, apar, potential, dt, direction);
+            
+//             if(i==Nstar/2){
+//                 printf("%d %e %e %e\n", j, x[0], x[1], x[2]);
+//                 printf("%d %e %e %e\n", j, v[0], v[1], v[2]);
+//             }
         }
         
         // final leapfrog step
         dostep1(x, v, apar_point, potential_point, dt, direction);
         
+//         if(i==Nstar/2)
+//             printf("%d %e %e %e\n", j, x[0], x[1], x[2]);
+        
+        
         t2n(x, x1, x2, x3, i);
         t2n(v, v1, v2, v3, i);
     }
+    
+//     printf("Finally\n");
+//     printf("%e %e %e\n", xp[0], xp[1], xp[2]);
+//     printf("%e %e %e\n", vp[0], vp[1], vp[2]);
+    
+//     printf("%d %d\n", Nenc, Ntot);
     
     return 0;
 }
@@ -552,8 +610,13 @@ void dostep(double *x, double *v, double *par, int potential, double deltat, dou
 			xt[j]=x[j]+dts*v[j];
 		force(xt, at, par, potential);
 
-        for(j=0;j<3;j++)
+        for(j=0;j<3;j++){
 			vt[j]=v[j]+dts*at[j];
+//             if(potential==1)
+//                 printf(" %e %e ", at[j], vt[j]);
+        }
+//         if(potential==1)
+//             printf("\n");
 		
 		// Update input vectors to current values
 		for(j=0;j<3;j++){

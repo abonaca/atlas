@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 
-int interact(double M, double B, double phi, double V, double theta, double T, double dt_, int Nstar, double *x1, double *x2, double *x3, double *v1, double *v2, double *v3);
+int interact(double M, double B, double phi, double V, double theta, double Tenc, double T, double dt_, int Nstar, double *x1, double *x2, double *x3, double *v1, double *v2, double *v3);
 int encounter(double M, double B, double phi, double V, double theta, double T, double dt_, double *x1, double *x2, double *x3, double *v1, double *v2, double *v3);
 
 

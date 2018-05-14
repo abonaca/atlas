@@ -41,11 +41,11 @@ double *pyvector_to_Carrayptrs(PyArrayObject *arrayin);
 static PyObject *interact_interact(PyObject *self, PyObject *args)
 {
     // Parse the input tuple
-    double M, B, phi, V, theta, T, dt_;
+    double M, B, phi, V, theta, Tenc, T, dt_;
     PyObject *x1_obj, *x1_array, *x2_obj, *x2_array, *x3_obj, *x3_array, *v1_obj, *v1_array, *v2_obj, *v2_array, *v3_obj, *v3_array;
 
     // reads in input parameters
-    if (!PyArg_ParseTuple(args, "dddddddOOOOOO", &M, &B, &phi, &V, &theta, &T, &dt_, &x1_obj, &x2_obj, &x3_obj, &v1_obj, &v2_obj, &v3_obj))
+    if (!PyArg_ParseTuple(args, "ddddddddOOOOOO", &M, &B, &phi, &V, &theta, &Tenc, &T, &dt_, &x1_obj, &x2_obj, &x3_obj, &v1_obj, &v2_obj, &v3_obj))
         return NULL;
 
     // Interpret the input parameters as numpy arrays
@@ -96,7 +96,7 @@ static PyObject *interact_interact(PyObject *self, PyObject *args)
     
 	// Call the external C function to calculate the interaction
 	int err; 
-    err = interact(M, B, phi, V, theta, T, dt_, Nstar, x1, x2, x3, v1, v2, v3);
+    err = interact(M, B, phi, V, theta, Tenc, T, dt_, Nstar, x1, x2, x3, v1, v2, v3);
     
 	// Check if error raised
 	if(err!=0) {
