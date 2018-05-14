@@ -1,3 +1,3 @@
 #! /usr/bin/env python
 
-from .streakline import *
+from .interact import *
