@@ -210,7 +210,7 @@ def change_b(seed=7356, th=90, case=0):
     titles = [title_less, title_main, title_more]
     
     plt.close()
-    fig, ax = plt.subplots(5,3,figsize=(10,10), sharex=True, sharey='row')
+    fig, ax = plt.subplots(5,3,figsize=(10,6), sharex=True, sharey='row')
     
     for ep, p in enumerate(p_array):
         #p = (G*M*T/(B**2*V*np.abs(np.sin(theta.rad)))).decompose()
@@ -231,7 +231,7 @@ def change_b(seed=7356, th=90, case=0):
             #fsqinv = np.sqrt(finv)
             
             if case==0:
-                x1, x2, x3, v1, v2, v3 = interact.interact(f*M.si.value, fsq*B_.si.value, phi.rad, V.si.value, theta.rad, Tenc.si.value, T.si.value, dt.si.value, x.si.value, y.si.value, z.si.value, vx.si.value, vy.si.value, vz.si.value)
+                x1, x2, x3, v1, v2, v3 = interact.interact(f*M.si.value, fsq*B_.si.value, phi.rad, V.si.value, theta.rad, Tenc.si.value, T.si.value, dt.si.value, (x*0.5/np.sqrt(p)).si.value, y.si.value, z.si.value, vx.si.value, vy.si.value, vz.si.value)
             elif case==1:
                 x1, x2, x3, v1, v2, v3 = interact.interact(M.si.value, fsq*B_.si.value, phi.rad, finv*V.si.value, theta.rad, Tenc.si.value, T.si.value, dt.si.value, x.si.value, y.si.value, z.si.value, vx.si.value, vy.si.value, vz.si.value)
             elif case==2:
@@ -244,16 +244,17 @@ def change_b(seed=7356, th=90, case=0):
             stream['v'] = (np.array([v1, v2, v3])*u.m/u.s).to(u.km/u.s)
             
             plt.sca(ax[ep][ef])
-            plt.plot(stream['x'][0], stream['x'][1], '.', color=color, ms=1.5, alpha=0.6)
+            plt.plot(stream['x'][0]/(fsq*B_), stream['x'][1]/(fsq*B_), '.', color=color, ms=1.5, alpha=0.6)
+            plt.gca().set_aspect('equal')
             
             if ep==0:
                 plt.title(titles[ef][case], fontsize='medium')
 
             if ep==np.size(p_array)-1:
-                plt.xlabel('x [pc]')
+                plt.xlabel('x / B')
             
             if ef==0:
-                plt.ylabel('y [pc]')
+                plt.ylabel('y / B')
             
             if ef==np.size(f_array)-1:
                 plt.ylabel('$\psi$ = {:.1f}'.format(p), labelpad=20, fontsize='small', rotation=270)
@@ -264,7 +265,7 @@ def change_b(seed=7356, th=90, case=0):
                 txt.set_bbox(dict(facecolor='w', alpha=0.7, ec='none'))
             
     plt.tight_layout(h_pad=0.1, w_pad=0.15)
-    plt.savefig('../plots/change_{}.png'.format(case))
+    plt.savefig('../plots/change_bscaled_{}.png'.format(case))
     #plt.savefig('../plots/change_b.pdf')
 
 

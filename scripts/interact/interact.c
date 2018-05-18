@@ -76,9 +76,9 @@ int interact(double M, double B, double phi, double V, double theta, double Tenc
 //     printf("%e %e %e\n", x0[0], x0[1], x0[2]);
 //     printf("%e %e %e\n", v0[0], v0[1], v0[2]);
     
-    x0[0] = 0.;
-    v0[0] = 0.;
-    v0[1] = 0.;
+//     x0[0] = 0.;
+//     v0[0] = 0.;
+//     v0[1] = 0.;
     
     ///////////////////
     // Perturb the tube
@@ -86,60 +86,74 @@ int interact(double M, double B, double phi, double V, double theta, double Tenc
     par[0] = M;
     direction = 1.;
     
+    // Reinitiate the perturber
+    t2t(x0, xp);
+    t2t(v0, vp);
+    
+    ////////////////////////
+    // Initial leapfrog step
+    for(k=0;k<3;k++)
+        par[k+1] = xp[k];
+    initpar(potential_point, par, apar_point);
+    
+    // update stream points
     for(i=0;i<Nstar;i++){
         // choose a star
         n2t(x, x1, x2, x3, i);
         n2t(v, v1, v2, v3, i);
         
-        // reinitiate the perturber
-        t2t(x0, xp);
-        t2t(v0, vp);
-        
-        // initial leapfrog step
-        for(k=0;k<3;k++)
-            par[k+1] = xp[k];
-        initpar(potential_point, par, apar_point);
-        
-//         if(i==Nstar/2)
-//             printf("%d %e %e %e\n", 0, x[0], x[1], x[2]);
-        
         dostep1(x, v, apar_point, potential_point, dt, direction);
-        dostep1(xp, vp, apar, potential, dt, direction);
-        
-//         if(i==Nstar/2)
-//             printf("0.5 %e %e %e\n", j, x[0], x[1], x[2]);
-        
-        // leapfrog steps
-        for(j=1;j<Ntot;j++){
-            for(k=0;k<3;k++)
-                par[k+1] = xp[k];
-            initpar(potential_point, par, apar_point);
-            
-            dostep(x, v, apar_point, potential_point, dt, direction);
-            dostep(xp, vp, apar, potential, dt, direction);
-            
-//             if(i==Nstar/2){
-//                 printf("%d %e %e %e\n", j, x[0], x[1], x[2]);
-//                 printf("%d %e %e %e\n", j, v[0], v[1], v[2]);
-//             }
-        }
-        
-        // final leapfrog step
-        dostep1(x, v, apar_point, potential_point, dt, direction);
-        
-//         if(i==Nstar/2)
-//             printf("%d %e %e %e\n", j, x[0], x[1], x[2]);
-        
         
         t2n(x, x1, x2, x3, i);
         t2n(v, v1, v2, v3, i);
     }
     
-//     printf("Finally\n");
-//     printf("%e %e %e\n", xp[0], xp[1], xp[2]);
-//     printf("%e %e %e\n", vp[0], vp[1], vp[2]);
+    // update perturber
+    dostep1(xp, vp, apar, potential, dt, direction);
     
-//     printf("%d %d\n", Nenc, Ntot);
+    /////////////////
+    // Leapfrog steps
+    for(j=1;j<Ntot;j++){
+        for(k=0;k<3;k++)
+            par[k+1] = xp[k];
+        initpar(potential_point, par, apar_point);
+        
+        // update stream points
+        for(i=0;i<Nstar;i++){
+            // choose a star
+            n2t(x, x1, x2, x3, i);
+            n2t(v, v1, v2, v3, i);
+            
+            dostep(x, v, apar_point, potential_point, dt, direction);
+            
+            t2n(x, x1, x2, x3, i);
+            t2n(v, v1, v2, v3, i);
+        }
+
+        // update perturber
+        dostep(xp, vp, apar, potential, dt, direction);
+    }
+    
+    //////////////////////
+    // Final leapfrog step
+    for(k=0;k<3;k++)
+        par[k+1] = xp[k];
+    initpar(potential_point, par, apar_point);
+    
+    // update stream points
+    for(i=0;i<Nstar;i++){
+        // choose a star
+        n2t(x, x1, x2, x3, i);
+        n2t(v, v1, v2, v3, i);
+        
+        dostep1(x, v, apar_point, potential_point, dt, direction);
+        
+        t2n(x, x1, x2, x3, i);
+        t2n(v, v1, v2, v3, i);
+    }
+    
+//     // update perturber
+//     dostep1(xp, vp, apar, potential, dt, direction);
     
     return 0;
 }
