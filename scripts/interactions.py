@@ -201,7 +201,7 @@ def change_b(seed=7356, th=90, case=0):
     vz = (np.random.randn(Nstar) - 0.5) * sx
     
     f_array = np.array([0.5,1,2])
-    p_array = np.array([0.1,0.3,0.5,1.,5.])
+    p_array = np.array([0.1,0.3,0.5,1.,2.])
     cmap_borange = mpl.colors.LinearSegmentedColormap.from_list('cmap_borange', [(0,'#ff9e00'), (1,'#e63f25')], N=256)
     
     title_main = ['B$_0$, M$_0$', 'B$_0$, V$_0$', 'M$_0$, V$_0$', 'M$_0$, T$_0$']
@@ -244,7 +244,7 @@ def change_b(seed=7356, th=90, case=0):
             stream['v'] = (np.array([v1, v2, v3])*u.m/u.s).to(u.km/u.s)
             
             plt.sca(ax[ep][ef])
-            plt.plot(stream['x'][0]/(fsq*B_), stream['x'][1]/(fsq*B_), '.', color=color, ms=1.5, alpha=0.6)
+            plt.plot(stream['x'][0]/(fsq*B_), stream['x'][1]/(fsq*B_), '.', color=color, ms=3, alpha=0.02)
             plt.gca().set_aspect('equal')
             
             if ep==0:
